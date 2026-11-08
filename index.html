@@ -16,3 +16,75 @@
   <button onclick="alert('测试成功！')">门店报货</button>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>火锅店报货系统</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f5f6f8;margin:0;padding:16px;color:#222}
+h1{font-size:24px;color:#b73535;text-align:center}
+.card{background:white;padding:18px;border-radius:12px;margin:15px 0;box-shadow:0 2px 8px #ddd}
+label{display:block;margin:12px 0 6px}
+select,input,button{width:100%;box-sizing:border-box;padding:13px;font-size:17px;border-radius:8px}
+select,input{border:1px solid #ccc}
+button{border:0;background:#b73535;color:white;margin-top:15px}
+li{padding:9px 0;border-bottom:1px solid #eee}
+small{color:#777}
+</style>
+</head>
+<body>
+<h1>火锅店报货管理系统</h1>
+<div class="card">
+<h2>门店报货</h2>
+<label>选择商品</label>
+<select id="product">
+<option value="牛油底料">牛油底料</option>
+<option value="菌汤底料">菌汤底料</option>
+<option value="肥肠">肥肠</option>
+<option value="先锋上脑">先锋上脑</option>
+<option value="卤鸭脖">卤鸭脖</option>
+</select>
+<label>报货数量</label>
+<input id="qty" type="number" min="1" step="1" placeholder="请输入数量">
+<button onclick="addItem()">加入报货清单</button>
+</div>
+<div class="card">
+<h2>今日报货清单</h2>
+<ul id="items"></ul>
+<button onclick="showOrder()">查看报货内容</button>
+<small>当前为演示版，数据只保存在本机浏览器中，尚未发送到库房。</small>
+</div>
+<script>
+let items=JSON.parse(localStorage.getItem('hotpotDemoOrder')||'[]');
+function render(){
+document.getElementById('items').innerHTML='';
+items.forEach((x,i)=>{
+let li=document.createElement('li');
+li.textContent=x.name+' × '+x.qty+' ';
+let b=document.createElement('button');
+b.textContent='删除';b.style.width='auto';
+b.onclick=()=>{items.splice(i,1);save()};
+li.appendChild(b);
+document.getElementById('items').appendChild(li);
+});
+}
+function save(){
+localStorage.setItem('hotpotDemoOrder',JSON.stringify(items));render();
+}
+function addItem(){
+let name=document.getElementById('product').value;
+let qty=Number(document.getElementById('qty').value);
+if(!Number.isInteger(qty)||qty<=0){alert('请输入正确的整数数量');return}
+items.push({name,qty});save();
+document.getElementById('qty').value='';
+alert('已加入清单');
+}
+function showOrder(){
+alert(items.length?items.map(x=>x.name+'：'+x.qty).join('\n'):'清单为空');
+}
+render();
+</script>
+</body>
+</html>
